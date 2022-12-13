@@ -1,3 +1,6 @@
 [submodule "quickjs"]
 	path = quickjs
 	url = git@github.com:near/quickjs.git
+[submodule "boost"]
+	path = boost
+	url = git@github.com:boostorg/boost.git
