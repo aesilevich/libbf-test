@@ -1,24 +1,3 @@
-[submodule "boost/multiprecision"]
-	path = boost/multiprecision
-	url = git@github.com:boostorg/multiprecision.git
-[submodule "boost/assert"]
-	path = boost/assert
-	url = git@github.com:boostorg/assert.git
-[submodule "boost/config"]
-	path = boost/config
-	url = git@github.com:boostorg/config.git
-[submodule "boost/core"]
-	path = boost/core
-	url = git@github.com:boostorg/core.git
-[submodule "boost/integer"]
-	path = boost/integer
-	url = git@github.com:boostorg/integer.git
-[submodule "boost/lexical_cast"]
-	path = boost/lexical_cast
-	url = git@github.com:boostorg/lexical_cast.git
-[submodule "boost/math"]
-	path = boost/math
-	url = git@github.com:boostorg/math.git
 [submodule "quickjs"]
 	path = quickjs
 	url = git@github.com:near/quickjs.git
