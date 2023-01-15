@@ -25,12 +25,12 @@ struct bf_float_backend
     //
     typedef std::tuple</*signed char, short, int, long,*/ long long>                                     signed_types;
     typedef std::tuple</* unsigned char, unsigned short, unsigned, unsigned long,*/ unsigned long long>  unsigned_types;
-    typedef std::tuple</*float,*/ double /*, long double*/>                                              float_types;
+    typedef std::tuple</*float,*/ double, long double>                                                   float_types;
     //
     // This typedef is only required if this is a floating point type, it is the type
     // which holds the exponent:
     //
-    typedef int64_t                                                         exponent_type;
+    typedef int exponent_type;
 
     bf_float_backend();
     bf_float_backend(const bf_float_backend& o);
@@ -54,6 +54,7 @@ struct bf_float_backend
     bf_float_backend& operator=(unsigned long long i);
     bf_float_backend& operator=(long long i);
     bf_float_backend& operator=(double i);
+    bf_float_backend& operator=(long double i);
     bf_float_backend& operator=(const char* s);
 
     void swap(bf_float_backend& o);
@@ -102,7 +103,7 @@ void eval_right_shift(bf_float_backend& a, unsigned shift);
 void eval_convert_to(unsigned long long* result, const bf_float_backend& backend);
 void eval_convert_to(long long* result, const bf_float_backend& backend);
 void eval_convert_to(long double* result, const bf_float_backend& backend);
-//void eval_convert_to(long double* result, const bf_float_backend& backend);
+void eval_convert_to(long double* result, const bf_float_backend& backend);
 
 //void eval_convert_to(unsigned long* result, const bf_float_backend& backend);
 //void eval_convert_to(unsigned* result, const bf_float_backend& backend);
@@ -122,20 +123,20 @@ void eval_convert_to(long double* result, const bf_float_backend& backend);
 //
 // Operations which are required *only* if we have a floating point type:
 //
-// void eval_frexp(bf_float_backend& result, const bf_float_backend& arg, bf_float_backend::exponent_type* p_exponent);
-// void eval_frexp(bf_float_backend& result, const bf_float_backend& arg, int* p_exponent);  // throws a runtime_error if the exponent is too large for an int
-// void eval_ldexp(bf_float_backend& result, const bf_float_backend& arg, bf_float_backend::exponent_type exponent);
-// void eval_ldexp(bf_float_backend& result, const bf_float_backend& arg, int exponent);
-// void eval_floor(bf_float_backend& result, const bf_float_backend& arg);
-// void eval_ceil(bf_float_backend& result, const bf_float_backend& arg);
-// void eval_sqrt(bf_float_backend& result, const bf_float_backend& arg);
+void eval_frexp(bf_float_backend& result, const bf_float_backend& arg, bf_float_backend::exponent_type* p_exponent);
+//void eval_frexp(bf_float_backend& result, const bf_float_backend& arg, int* p_exponent);  // throws a runtime_error if the exponent is too large for an int
+void eval_ldexp(bf_float_backend& result, const bf_float_backend& arg, bf_float_backend::exponent_type exponent);
+//void eval_ldexp(bf_float_backend& result, const bf_float_backend& arg, int exponent);
+void eval_floor(bf_float_backend& result, const bf_float_backend& arg);
+void eval_ceil(bf_float_backend& result, const bf_float_backend& arg);
+void eval_sqrt(bf_float_backend& result, const bf_float_backend& arg);
 //
 // Operations defined *only* if we have a complex number type, type
 // skeleton_real_type is assumed to be the real number type matching
 // this type.
 //
-void eval_conj(bf_float_backend& result, const bf_float_backend& arg);
-void eval_proj(bf_float_backend& result, const bf_float_backend& arg);
+// void eval_conj(bf_float_backend& result, const bf_float_backend& arg);
+// void eval_proj(bf_float_backend& result, const bf_float_backend& arg);
 //void eval_real(skeleton_real_type& result, const bf_float_backend& arg);
 //void eval_set_real(skeleton_real_type& result, const bf_float_backend& arg);
 //void eval_imag(skeleton_real_type& result, const bf_float_backend& arg);
@@ -870,22 +871,25 @@ void eval_powm(bf_float_backend& result, const bf_float_backend& a, signed char 
 ***********************************************************************************************/
 
 void eval_pow(bf_float_backend& result, const bf_float_backend& a, const bf_float_backend& b);
-
-#if 0
-
-int eval_fpclassify(const bf_float_backend& arg);
-void eval_trunc(bf_float_backend& result, const bf_float_backend& arg);
-void eval_round(bf_float_backend& result, const bf_float_backend& arg);
+void eval_acos(bf_float_backend& result, const bf_float_backend& arg);
+void eval_atan(bf_float_backend& result, const bf_float_backend& arg);
+void eval_atan2(bf_float_backend& result, const bf_float_backend& a, const bf_float_backend& b);
 void eval_exp(bf_float_backend& result, const bf_float_backend& arg);
-void eval_exp2(bf_float_backend& result, const bf_float_backend& arg);
 void eval_log(bf_float_backend& result, const bf_float_backend& arg);
-void eval_log10(bf_float_backend& result, const bf_float_backend& arg);
 void eval_sin(bf_float_backend& result, const bf_float_backend& arg);
 void eval_cos(bf_float_backend& result, const bf_float_backend& arg);
 void eval_tan(bf_float_backend& result, const bf_float_backend& arg);
 void eval_asin(bf_float_backend& result, const bf_float_backend& arg);
-void eval_acos(bf_float_backend& result, const bf_float_backend& arg);
-void eval_atan(bf_float_backend& result, const bf_float_backend& arg);
+
+
+int eval_fpclassify(const bf_float_backend& arg);
+
+#if 0
+
+void eval_trunc(bf_float_backend& result, const bf_float_backend& arg);
+void eval_round(bf_float_backend& result, const bf_float_backend& arg);
+void eval_exp2(bf_float_backend& result, const bf_float_backend& arg);
+void eval_log10(bf_float_backend& result, const bf_float_backend& arg);
 void eval_sinh(bf_float_backend& result, const bf_float_backend& arg);
 void eval_cosh(bf_float_backend& result, const bf_float_backend& arg);
 void eval_tanh(bf_float_backend& result, const bf_float_backend& arg);
@@ -894,7 +898,6 @@ void eval_acosh(bf_float_backend& result, const bf_float_backend& arg);
 void eval_atanh(bf_float_backend& result, const bf_float_backend& arg);
 void eval_fmod(bf_float_backend& result, const bf_float_backend& a, const bf_float_backend& b);
 void eval_modf(bf_float_backend& result, const bf_float_backend& a, const bf_float_backend& b);
-void eval_atan2(bf_float_backend& result, const bf_float_backend& a, const bf_float_backend& b);
 void eval_scalbn(bf_float_backend& result, const bf_float_backend& arg, bf_float_backend::exponent_type e);
 void eval_scalbln(bf_float_backend& result, const bf_float_backend& arg, bf_float_backend::exponent_type e);
 skeleton_type::exponent_type eval_ilogb(const bf_float_backend& arg);
@@ -1084,6 +1087,7 @@ bf_float bf_float_max();
 bf_float bf_float_min();
 bf_float bf_float_elipson();
 bf_float bf_float_quiet_NaN();
+bf_float bf_float_infinity();
 
 //
 // These 2 traits classes are required for complex types only:
@@ -1216,25 +1220,25 @@ public:
     static number_type(min)() { return boost::multiprecision::bf_float_min(); }
     static number_type(max)() { return boost::multiprecision::bf_float_max(); }
     static number_type lowest();
-    static constexpr int                digits       = 0;
-    static constexpr int                digits10     = 0;
-    static constexpr int                max_digits10 = 0;
+    static constexpr int                digits       = 113;
+    static constexpr int                digits10     = LIMB_DIGITS;
+    static constexpr int                max_digits10 = LIMB_DIGITS;
     static constexpr bool               is_signed    = false;
     static constexpr bool               is_integer   = false;
     static constexpr bool               is_exact     = false;
     static constexpr int                radix        = 2;
     static number_type                        epsilon() { return boost::multiprecision::bf_float_elipson(); }
     static number_type                        round_error();
-    static constexpr int                min_exponent      = 0;
-    static constexpr int                min_exponent10    = 0;
-    static constexpr int                max_exponent      = 0;
-    static constexpr int                max_exponent10    = 0;
-    static constexpr bool               has_infinity      = false;
+    static constexpr int                min_exponent      = INT_MIN;
+    static constexpr int                min_exponent10    = INT_MIN;
+    static constexpr int                max_exponent      = INT_MAX;
+    static constexpr int                max_exponent10    = INT_MAX;
+    static constexpr bool               has_infinity      = true;
     static constexpr bool               has_quiet_NaN     = false;
-    static constexpr bool               has_signaling_NaN = false;
+    static constexpr bool               has_signaling_NaN = true;
     static constexpr float_denorm_style has_denorm        = denorm_absent;
     static constexpr bool               has_denorm_loss   = false;
-    static number_type                        infinity();
+    static number_type                        infinity() { return boost::multiprecision::bf_float_infinity(); }
     static number_type                        quiet_NaN() { return boost::multiprecision::bf_float_quiet_NaN(); }
     static number_type                        signaling_NaN();
     static number_type                        denorm_min();

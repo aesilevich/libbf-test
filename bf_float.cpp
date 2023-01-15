@@ -1,5 +1,6 @@
 
 #include "bf_float.hpp"
+#include <iostream>
 
 
 namespace boost::multiprecision::backends {
@@ -74,7 +75,7 @@ static std::string bf_error_string(int ret) {
 }
 
 
-// Checks for libbf error and throws corresponding exception
+// Checks for libbf error and reports error and throws corresponding exception
 void check_bf_error(int ret, const std::string_view & op) {
     ret &= ~(BF_ST_INEXACT);
     // ret &= ~(BF_ST_UNDERFLOW);
@@ -84,8 +85,8 @@ void check_bf_error(int ret, const std::string_view & op) {
         return;
     }
 
-
-    throw std::runtime_error{std::string{op} + std::string{" operation failed: "} + bf_error_string(ret)};
+    std::cerr << "ERROR: " << op << " operation failed: " << bf_error_string(ret) << std::endl;
+//    throw std::runtime_error{std::string{op} + std::string{" operation failed: "} + bf_error_string(ret)};
 }
 
 
@@ -133,6 +134,13 @@ bf_float_backend& bf_float_backend::operator=(long long i) {
 
 bf_float_backend& bf_float_backend::operator=(double i) {
     auto ret = ::bf_set_float64(bf_val(), i);
+    check_bf_error(ret, "bf_set_float64");
+    return *this;
+}
+
+
+bf_float_backend& bf_float_backend::operator=(long double i) {
+    auto ret = ::bf_set_float64(bf_val(), static_cast<double>(i));
     check_bf_error(ret, "bf_set_float64");
     return *this;
 }
@@ -191,7 +199,7 @@ void eval_subtract(bf_float_backend& a, const bf_float_backend& b) {
 void eval_multiply(bf_float_backend& a, const bf_float_backend& b) {
     bf_float_backend res;
     auto ret = ::bf_mul(res.bf_val(), a.bf_val(), b.bf_val(), libbf_default_prec, libbf_default_flags);
-    check_bf_error(ret, "bf_add");
+    check_bf_error(ret, "bf_mul");
     a = res;
 }
 
@@ -225,10 +233,143 @@ void eval_convert_to(double* result, const bf_float_backend& backend) {
 }
 
 
+void eval_convert_to(long double* result, const bf_float_backend& backend) {
+    double double_result = 0.0;
+    auto res = ::bf_get_float64(backend.bf_val(), &double_result, BF_RNDZ);
+    check_bf_error(res, "bf_get_float64");
+    *result = static_cast<long double>(double_result);
+}
+
+
+// void eval_frexp(bf_float_backend& result, const bf_float_backend& arg, bf_float_backend::exponent_type* p_exponent) {
+//     assert(false && "NYI");
+// }
+
+
+ // throws a runtime_error if the exponent is too large for an int
+void eval_frexp(bf_float_backend& result, const bf_float_backend& arg, int* p_exponent) {
+//    assert(false && "NYI");
+}
+
+
+void eval_ldexp(bf_float_backend& result, const bf_float_backend& arg, bf_float_backend::exponent_type exponent) {
+    result = arg;
+    auto ret = ::bf_mul_2exp(result.bf_val(), exponent, libbf_default_prec, libbf_default_flags);
+    check_bf_error(ret, "bf_mul_2exp");
+}
+
+
+// void eval_ldexp(bf_float_backend& result, const bf_float_backend& arg, int exponent) {
+//     result = arg;
+//     auto ret = ::bf_mul_2exp(result.bf_val(), static_cast<slimb_t>(exponent), libbf_default_prec, libbf_default_flags);
+//     check_bf_error(ret, "bf_mul_2exp");
+// }
+
+
+std::size_t hash_value(const bf_float_backend& arg) {
+    return 1;
+}
+
+
+void eval_floor(bf_float_backend& result, const bf_float_backend& arg) {
+    result = arg;
+    auto ret = ::bf_rint(result.bf_val(), BF_RNDD);
+    check_bf_error(ret, "bf_rint");
+}
+
+
+void eval_ceil(bf_float_backend& result, const bf_float_backend& arg) {
+    result = arg;
+    auto ret = ::bf_rint(result.bf_val(), BF_RNDU);
+    check_bf_error(ret, "bf_rint");
+}
+
+
+void eval_sqrt(bf_float_backend& result, const bf_float_backend& arg) {
+    auto ret = ::bf_sqrt(result.bf_val(), arg.bf_val(), libbf_default_prec, libbf_default_flags);
+    check_bf_error(ret, "bf_sqrt");
+}
+
+
 void eval_pow(bf_float_backend& result, const bf_float_backend& a, const bf_float_backend& b) {
     auto ret = ::bf_pow(result.bf_val(), a.bf_val(), b.bf_val(), libbf_default_prec, libbf_default_flags);
     check_bf_error(ret, "bf_pow");
 }
+
+
+void eval_acos(bf_float_backend& result, const bf_float_backend& arg) {
+    auto ret = ::bf_acos(result.bf_val(), arg.bf_val(), libbf_default_prec, libbf_default_flags);
+    check_bf_error(ret, "bf_acos");
+}
+
+
+void eval_atan(bf_float_backend& result, const bf_float_backend& arg) {\
+    auto ret = ::bf_atan(result.bf_val(), arg.bf_val(), libbf_default_prec, libbf_default_flags);
+    check_bf_error(ret, "bf_atan");
+}
+
+
+void eval_atan2(bf_float_backend& result, const bf_float_backend& a, const bf_float_backend& b) {
+    auto ret = ::bf_atan2(result.bf_val(), a.bf_val(), b.bf_val(), libbf_default_prec, libbf_default_flags);
+    check_bf_error(ret, "bf_atan2");
+}
+
+
+void eval_exp(bf_float_backend& result, const bf_float_backend& arg) {
+    auto ret = ::bf_exp(result.bf_val(), arg.bf_val(), libbf_default_prec, libbf_default_flags);
+    check_bf_error(ret, "bf_exp");
+}
+
+
+void eval_log(bf_float_backend& result, const bf_float_backend& arg) {
+    auto ret = ::bf_log(result.bf_val(), arg.bf_val(), libbf_default_prec, libbf_default_flags);
+    check_bf_error(ret, "bf_log");
+}
+
+
+void eval_sin(bf_float_backend& result, const bf_float_backend& arg) {
+    auto ret = ::bf_sin(result.bf_val(), arg.bf_val(), libbf_default_prec, libbf_default_flags);
+    check_bf_error(ret, "bf_sin");
+}
+
+
+void eval_cos(bf_float_backend& result, const bf_float_backend& arg) {
+    auto ret = ::bf_cos(result.bf_val(), arg.bf_val(), libbf_default_prec, libbf_default_flags);
+    check_bf_error(ret, "bf_cos");
+}
+
+
+void eval_tan(bf_float_backend& result, const bf_float_backend& arg) {
+    auto ret = ::bf_tan(result.bf_val(), arg.bf_val(), libbf_default_prec, libbf_default_flags);
+    check_bf_error(ret, "bf_tan");
+}
+
+
+void eval_asin(bf_float_backend& result, const bf_float_backend& arg) {
+    auto ret = ::bf_asin(result.bf_val(), arg.bf_val(), libbf_default_prec, libbf_default_flags);
+    check_bf_error(ret, "bf_asin");
+}
+
+
+int eval_fpclassify(const bf_float_backend& arg) {
+    if (::bf_is_zero(arg.bf_val())) {
+        return FP_ZERO;
+    } else if (::bf_is_nan(arg.bf_val())) {
+        return FP_NAN;
+    } else if (!::bf_is_finite(arg.bf_val())) {
+        return FP_INFINITE;
+    } else {
+        return FP_NORMAL;
+    }
+}
+
+
+// void eval_conj(bf_float_backend& result, const bf_float_backend& arg) {
+// }
+
+
+// void eval_proj(bf_float_backend& result, const bf_float_backend& arg) {
+// }
 
 
 // copied from libbf.c
@@ -294,28 +435,6 @@ bf_float_backend bf_float_backend_min() {
 }
 
 
-// static int bf_float_set_overflow(bf_t* r, int sign, limb_t prec, bf_flags_t flags)
-// {
-//     slimb_t i, l, e_max;
-//     int rnd_mode;
-    
-//     rnd_mode = flags & BF_RND_MASK;
-
-//         /* set to maximum finite number */
-//         l = (prec + LIMB_BITS - 1) / LIMB_BITS;
-//         if (bf_resize(r, l)) {
-//             bf_set_nan(r);
-//             return BF_ST_MEM_ERROR;
-//         }
-//         r->tab[0] = limb_mask((-prec) & (LIMB_BITS - 1),
-//                               LIMB_BITS - 1);
-//         for(i = 1; i < l; i++)
-//             r->tab[i] = (limb_t)-1;
-//         e_max = (limb_t)1 << (bf_get_exp_bits(flags) - 1);
-//         r->expn = e_max;
-//         r->sign = sign;
-// }
-
 
 namespace boost::multiprecision {
 
@@ -330,13 +449,22 @@ bf_float bf_float_min() {
 
 
 bf_float bf_float_elipson() {
+    bf_float_backend esp;
     return bf_float{std::numeric_limits<double>::epsilon()};
 }
 
 
 bf_float bf_float_quiet_NaN() {
-    assert(false && "NYI");
-    return bf_float{};
+    bf_float_backend nan;
+    ::bf_set_nan(nan.bf_val());
+    return bf_float{nan};
+}
+
+
+bf_float bf_float_infinity() {
+    bf_float_backend inf;
+    ::bf_set_inf(inf.bf_val(), false);
+    return bf_float{inf};
 }
 
 
