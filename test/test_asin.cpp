@@ -56,9 +56,8 @@
 #include <boost/multiprecision/cpp_bin_float.hpp>
 #endif
 #ifdef TEST_BF_FLOAT
-#include "bf_float.hpp"
+#include "../bf_float/bf_float.hpp"
 #endif
-
 
 template <class T>
 void test()
@@ -68,41 +67,33 @@ void test()
    // Test with some exact binary values as input - this tests our code
    // rather than the test data:
    //
-   static const boost::array<boost::array<T, 2>, 13> exact_data =
+   static const boost::array<boost::array<T, 2>, 6> exact_data =
        {{
-           {{0.5, static_cast<T>("1.04719755119659774615421446109316762806572313312503527365831486410260546876206966620934494178070568932738269550442743555")}},
-           {{0.25, static_cast<T>("1.31811607165281796574566425464604046984639096659071471685354851741333314266208327690226867044304393238598144034722708676")}},
-           {{0.75, static_cast<T>("0.722734247813415611178377352641333362025218486424440267626754132583707381914630264964827610939101303690078815991333621490")}},
-           {{1 - std::ldexp(1.0, -20), static_cast<T>("0.00138106804176241718210883847756746694048570648553426714212025111150044290934710742282266738617709904634187850607042604204")}},
-           {{std::ldexp(1.0, -20), static_cast<T>("1.57079537312058021283676140197495835299636605165647561806789944133748780804448843729970624018104090863783682329820313127")}},
-           {{1, static_cast<T>("0")}},
-
-           {{0, static_cast<T>("1.57079632679489661923132169163975144209858469968755291048747229615390820314310449931401741267105853399107404325664115332")}},
-
-           {{-0.5, static_cast<T>("2.09439510239319549230842892218633525613144626625007054731662972820521093752413933241868988356141137865476539100885487110")}},
-           {{-0.25, static_cast<T>("1.82347658193697527271697912863346241435077843278439110412139607489448326362412572172576615489907313559616664616605521989")}},
-           {{-0.75, static_cast<T>("2.41885840577637762728426603063816952217195091295066555334819045972410902437157873366320721440301576429206927052194868516")}},
-           {{-1 + std::ldexp(1.0, -20), static_cast<T>("3.14021158554803082128053454480193541725668369288957155383282434119631596337686189120521215795593996893580620800721188061")}},
-           {{-std::ldexp(1.0, -20), static_cast<T>("1.57079728046921302562588198130454453120080334771863020290704515097032859824172056132832858516107615934431126321507917538")}},
-           {{-1, static_cast<T>("3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230665")}},
+           {{0.5, static_cast<T>("0.523598775598298873077107230546583814032861566562517636829157432051302734381034833104672470890352844663691347752213717775")}},
+           {{0.25, static_cast<T>("0.252680255142078653485657436993710972252193733096838193633923778740575060481021222411748742228014601605092602909414066566")}},
+           {{0.75, static_cast<T>("0.848062078981481008052944338998418080073366213263112642860718163570200821228474234349189801731957230300995227265307531834")}},
+           {{std::ldexp(1.0, -20), static_cast<T>("9.53674316406394560289664793089102218648031077292419572854816420395098616062014311172490017625353237219958438022056661501e-7")}},
+           {{1 - std::ldexp(1.0, -20), static_cast<T>("1.56941525875313420204921285316218397515809899320201864334535204504240776023375739189119474528488143494473216475057072728")}},
+           {{1, static_cast<T>("1.57079632679489661923132169163975144209858469968755291048747229615390820314310449931401741267105853399107404325664115332354692230477529111586267970406424055872514205135096926055277982231147447746519098221440548783296672306423782411689339158263560095457282428346173017430522716332410669680363012457064")}},
        }};
    unsigned max_err = 0;
    for (unsigned k = 0; k < exact_data.size(); k++)
    {
-      T        val = acos(exact_data[k][0]);
+      T        val = asin(exact_data[k][0]);
       T        e   = relative_error(val, exact_data[k][1]);
       unsigned err = e.template convert_to<unsigned>();
+      if (err > max_err)
+         max_err = err;
+      val = asin(-exact_data[k][0]);
+      e   = relative_error(val, T(-exact_data[k][1]));
+      err = e.template convert_to<unsigned>();
       if (err > max_err)
       {
          max_err = err;
       }
    }
    std::cout << "Max error was: " << max_err << std::endl;
-#ifdef TEST_CPP_BIN_FLOAT
-   BOOST_TEST(max_err < 320);
-#else
-   BOOST_TEST(max_err < 60);
-#endif
+   BOOST_TEST(max_err < 20);
    BOOST_TEST(asin(T(0)) == 0);
 }
 
@@ -136,6 +127,9 @@ int main()
    test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<60, long long> > >();
    test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<59, long long, std::allocator<char> > > >();
    test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<58, long long, std::allocator<char> > > >();
+   // Check low multiprecision digit counts.
+   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<9> > >();
+   test<boost::multiprecision::number<boost::multiprecision::cpp_dec_float<18> > >();
 #endif
 #endif
 #ifdef TEST_FLOAT128
@@ -146,7 +140,7 @@ int main()
    test<boost::multiprecision::number<boost::multiprecision::cpp_bin_float<35, boost::multiprecision::digit_base_10, std::allocator<char>, long long> > >();
 #endif
 #ifdef TEST_BF_FLOAT
-   test<boost::multiprecision::bf_float>();
+   test<boost::multiprecision::bf_float<>>();
 #endif
    return boost::report_errors();
 }

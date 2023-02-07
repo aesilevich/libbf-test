@@ -10,7 +10,6 @@
 #include <limits>
 #include <cmath>
 #include <typeinfo>
-#include <iomanip>
 
 #include <boost/detail/lightweight_test.hpp>
 #include <boost/current_function.hpp>
@@ -43,8 +42,6 @@ typename std::enable_if<boost::multiprecision::number_category<T>::value == boos
 template <class T>
 typename std::enable_if<!((boost::multiprecision::number_category<T>::value == boost::multiprecision::number_kind_integer) || boost::multiprecision::is_interval_number<T>::value), T>::type relative_error(T a, T b)
 {
-   std::cout << "RELATIVE ERROR!" << std::endl;
-
    using ::detail::abs;
    using std::abs;
 
