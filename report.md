@@ -7,7 +7,7 @@
 |-------------------------------|-------------------|
 |test_acos                      | Tests acos floating point function. Tested with precisions: 113, 50, 100, 200, 400. |
 |test_asin                      | Tests asin floating point function. Tested with precisions: 113, 50, 100, 200, 400. |
-|test_atan                      | Tests atan floating point function. | **FAILED** (very low precision) |
+|test_atan                      | Tests atan floating point function. Tested with precisions: 113, 50, 100, 200, 400, 500, 1000. |
 |test_constants                 | Tests calculating ln2, e, pi floating point constants. Tested with precision 2000. |
 |test_cos                       | Tests cos floating point function test. Tested with precisions: 113, 50, 100, 200, 400. |
 |test_cos_near_half_pi          | Tests cos floating point function for values near pi/2. Tested with precisions: 113, 50, 100, 200, 400 |
@@ -24,7 +24,7 @@
 |test_tan                       | Tests tan floating point function. Tested with precisions: 113, 50, 100, 200. |
 |test_tanh                      | Tests tanh floating point function. Tested with precisions: 113, 50, 100, 200, 400, 500, 1000. |
 |test_sin_near_half_pi          | Tests sin floating point function for values near pi/2. Tested with precisions: 113, 50, 100, 200, 400, 500, 1000. |
-|test_sf_import_c99             | Big amount of various tests for compatibility with C99 standard. **Problems with atan/atan2 functions**. |
+|test_sf_import_c99             | Big amount of various tests for compatibility with C99 standard. **Problems with atan/atan2 and erf functions**. |
 |test_signed_zero               | Signed zero tests. Tested with precisions: 113, 50, 100, 200, 400, 500, 1000. |
 |test_round                     | Tests rounding functions. Tested with precisions: 113, 50, 100, 200, 400, 500, 1000. |
 |test_sqrt                      | Tests sqrt function. Tested with precisions: 113, 50, 100, 200, 400, 500, 1000. |

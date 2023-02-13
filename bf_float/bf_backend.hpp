@@ -131,9 +131,9 @@ public:
     }
 
 
-    void from_string(const char * s) {
+    void from_string(const char * s, ::limb_t prec) {
         const char * end = nullptr;
-        auto ret = ::bf_atof(bf_val(), s, &end, 10, BF_PREC_INF, bf_flags_);
+        auto ret = ::bf_atof(bf_val(), s, &end, 10, prec, bf_flags_);
         check_bf_error(ret, "bf_atof");
 
         assert(end != nullptr && "invalid pointer to end character");

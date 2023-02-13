@@ -41,7 +41,7 @@ public:
     bf_float_backend & operator=(long double i) { assign(i); return *this; }
     bf_float_backend & operator=(__float128 i) { assign(i); return *this; }
 
-    bf_float_backend & operator=(const char * s) { from_string(s); return *this; }
+    bf_float_backend & operator=(const char * s) { from_string(s, Precision); return *this; }
 
     std::string str(std::streamsize digits, std::ios_base::fmtflags f) const {
         auto res = ::bf_ftoa(nullptr, bf_val(), 10, Precision, bf_flags | BF_FTOA_FORMAT_FREE_MIN);

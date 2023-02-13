@@ -59,7 +59,7 @@ public:
     bf_int_backend & operator=(__float128 i) { assign(i); return *this; }
 
     bf_int_backend & operator=(const char * s) {
-        from_string(s);
+        from_string(s, Precision);
 
         // rounding number and checking that it requal to this
         bf_int_backend rounded = *this;

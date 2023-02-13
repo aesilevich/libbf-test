@@ -152,10 +152,6 @@ void test()
    {
       T        val = atan(arg);
       T        e   = relative_error(val, T(data[k]));
-      std::cerr << "TEST: " << k << ":\n"
-                << "result:   " << val << "\n"
-                << "expected: " << data[k] << "\n"
-                << "error:    " << e << "\n";
       unsigned err = e.template convert_to<unsigned>();
       if (err > max_err)
          max_err = err;
@@ -300,7 +296,13 @@ int main()
    test<boost::multiprecision::number<boost::multiprecision::cpp_bin_float<35, boost::multiprecision::digit_base_10, std::allocator<char>, long long> > >();
 #endif
 #ifdef TEST_BF_FLOAT
+   test<boost::multiprecision::bf_float<>>();
+   test<boost::multiprecision::bf_float<50>>();
    test<boost::multiprecision::bf_float<100>>();
+   test<boost::multiprecision::bf_float<200>>();
+   test<boost::multiprecision::bf_float<400>>();
+   test<boost::multiprecision::bf_float<500>>();
+   test<boost::multiprecision::bf_float<1000>>();
 #endif
    return boost::report_errors();
 }
