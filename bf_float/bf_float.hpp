@@ -19,6 +19,12 @@ using boost::multiprecision::backends::bf_float_backend;
 template <limb_t Precision = 113>
 using bf_float = number<bf_float_backend<Precision>, et_off>;
 
+using bf_float_50 = number<bf_float_backend<50>, et_off>;
+using bf_float_100 = number<bf_float_backend<100>, et_off>;
+using bf_float_200 = number<bf_float_backend<200>, et_off>;
+using bf_float_500 = number<bf_float_backend<500>, et_off>;
+using bf_float_1000 = number<bf_float_backend<1000>, et_off>;
+
 //
 // Define a category for this number type, one of:
 // 
@@ -62,17 +68,13 @@ bf_float<Precision> bf_float_epsilon() {
 
 template <limb_t Precision>
 bf_float<Precision> bf_float_quiet_NaN() {
-    bf_float_backend<Precision> nan;
-    ::bf_set_nan(nan.bf_val());
-    return bf_float{nan};
+    return bf_float<Precision>{bf_float_backend<Precision>::quiet_NaN()};
 }
 
 
 template <limb_t Precision>
 bf_float<Precision> bf_float_infinity() {
-    bf_float_backend<Precision> inf;
-    ::bf_set_inf(inf.bf_val(), false);
-    return bf_float<Precision>{inf};
+    return bf_float<Precision>{bf_float_backend<Precision>::infinity()};
 }
 
 
@@ -105,7 +107,7 @@ public:
     static constexpr int                max_exponent      = INT_MAX;
     static constexpr int                max_exponent10    = INT_MAX;
     static constexpr bool               has_infinity      = true;
-    static constexpr bool               has_quiet_NaN     = false;
+    static constexpr bool               has_quiet_NaN     = true;
     static constexpr bool               has_signaling_NaN = true;
     static constexpr float_denorm_style has_denorm        = denorm_absent;
     static constexpr bool               has_denorm_loss   = false;

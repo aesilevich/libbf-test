@@ -671,6 +671,13 @@ bool type_sets_errno(const boost::multiprecision::float128&)
    return false;
 }
 #endif
+#ifdef TEST_BF_FLOAT
+template <::limb_t Precision>
+bool type_sets_errno(const boost::multiprecision::bf_float<Precision>&)
+{
+   return false;
+}
+#endif
 
 template <class T>
 typename std::enable_if<std::numeric_limits<T>::is_specialized>::type check_invalid(const T& val)
@@ -2283,8 +2290,10 @@ int main()
    test_c99_appendix_F<boost::multiprecision::number<boost::multiprecision::logged_adaptor<boost::multiprecision::mpfr_float_backend<50> > > >();
 #endif
 #ifdef TEST_BF_FLOAT
-   test<boost::multiprecision::bf_float<>>();
-   test_c99_appendix_F<boost::multiprecision::bf_float<>>();
+   test<boost::multiprecision::bf_float<50>>();
+   test_c99_appendix_F<boost::multiprecision::bf_float<50>>();
+   test<boost::multiprecision::bf_float<100>>();
+   test_c99_appendix_F<boost::multiprecision::bf_float<100>>();
 #endif
    return boost::report_errors();
 }

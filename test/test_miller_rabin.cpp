@@ -82,11 +82,10 @@ int main()
    // test<std::uint64_t>();
    // test<std::uint32_t>();
 
-   // test<cpp_int>();
-   // test<number<cpp_int_backend<64, 64, unsigned_magnitude, checked, void>, et_off> >();
-   // test<checked_uint128_t>();
-   // test<checked_uint1024_t>();
-   test<bf_int<BF_PREC_INF>>();
+   test<bf_int<>>();
+   test<bf_int<64>>();
+   test<bf_int<128>>();
+   test<bf_int<1024>>();
 
    return boost::report_errors();
 }

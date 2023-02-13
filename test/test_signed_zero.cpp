@@ -301,6 +301,12 @@ int main()
 #endif
 #ifdef TEST_BF_FLOAT
    test<boost::multiprecision::bf_float<>>();
+   test<boost::multiprecision::bf_float<50>>();
+   test<boost::multiprecision::bf_float<100>>();
+   test<boost::multiprecision::bf_float<200>>();
+   test<boost::multiprecision::bf_float<400>>();
+   test<boost::multiprecision::bf_float<500>>();
+   test<boost::multiprecision::bf_float<1000>>();
 #endif
    return boost::report_errors();
 }

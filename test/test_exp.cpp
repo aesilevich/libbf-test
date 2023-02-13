@@ -142,7 +142,7 @@ void test()
    std::cout << "Max error was: " << max_err << std::endl;
 #if defined(BOOST_INTEL) && defined(TEST_FLOAT128)
    BOOST_TEST(max_err < 40000);
-#elif defined(TEST_CPP_BIN_FLOAT)
+#elif defined(TEST_CPP_BIN_FLOAT) || defined(TEST_BF_FLOAT)
    BOOST_TEST(max_err < 6200);
 #else
    BOOST_TEST(max_err < 5000);
@@ -253,6 +253,9 @@ int main()
 #endif
 #ifdef TEST_BF_FLOAT
    test<boost::multiprecision::bf_float<>>();
+   test<boost::multiprecision::bf_float<50>>();
+   test<boost::multiprecision::bf_float<100>>();
+   test<boost::multiprecision::bf_float<200>>();
 #endif
    return boost::report_errors();
 }

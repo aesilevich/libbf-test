@@ -15,7 +15,7 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Emscripten")
 endif()
 
 
-set(BOOST_INCLUDE_LIBRARIES multiprecision exception math)
+set(BOOST_INCLUDE_LIBRARIES multiprecision exception math test)
 add_subdirectory(boost)
 
 add_library(bf STATIC

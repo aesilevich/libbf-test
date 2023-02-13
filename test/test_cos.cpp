@@ -24,6 +24,7 @@
 #define TEST_MPFI_50
 #define TEST_FLOAT128
 #define TEST_CPP_BIN_FLOAT
+#define TEST_BF_FLOAT
 
 #ifdef _MSC_VER
 #pragma message("CAUTION!!: No backend type specified so testing everything.... this will take some time!!")
@@ -386,6 +387,10 @@ int main()
 #endif
 #ifdef TEST_BF_FLOAT
    test<boost::multiprecision::bf_float<>>();
+   test<boost::multiprecision::bf_float<50>>();
+   test<boost::multiprecision::bf_float<100>>();
+   test<boost::multiprecision::bf_float<200>>();
+   test<boost::multiprecision::bf_float<400>>();
 #endif
    return boost::report_errors();
 }

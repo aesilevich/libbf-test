@@ -870,7 +870,12 @@ int main()
    test<boost::multiprecision::number<boost::multiprecision::cpp_bin_float<35, boost::multiprecision::digit_base_10, std::allocator<char>, long long> > >();
 #endif
 #ifdef TEST_BF_FLOAT
-   test<boost::multiprecision::bf_float<10>>();
+   test<boost::multiprecision::bf_float<>>();
+   test<boost::multiprecision::bf_float<50>>();
+   test<boost::multiprecision::bf_float<100>>();
+   test<boost::multiprecision::bf_float<200>>();
+   test<boost::multiprecision::bf_float<400>>();
+   test<boost::multiprecision::bf_float<500>>();
 #endif
    return boost::report_errors();
 }

@@ -45,9 +45,6 @@ void eval_convert_to(float* result, const bf_float_backend& backend);
 //
 #if 0
 
-bool eval_is_zero(const bf_float_backend& arg);
-int eval_get_sign(const bf_float_backend& arg);
-
 bool eval_eq(const bf_float_backend& a, const bf_float_backend& b);
 bool eval_eq(const bf_float_backend& a, unsigned long long b);
 bool eval_eq(const bf_float_backend& a, unsigned long b);

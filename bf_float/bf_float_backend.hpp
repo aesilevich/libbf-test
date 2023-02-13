@@ -2,7 +2,7 @@
 #pragma once
 
 #include "bf_backend.hpp"
-#include "bf_float_context.hpp"
+#include "bf_context.hpp"
 #include "bf_error.hpp"
 #include "libbf.hpp"
 #include <boost/multiprecision/number.hpp>
@@ -62,6 +62,18 @@ public:
     //    t = i;  //  Note: construct directly from i if supported.
     //    return compare(t);
     // }
+
+    static bf_float_backend<Precision> infinity() {
+        bf_float_backend<Precision> res;
+        ::bf_set_inf(res.bf_val(), false);
+        return res;
+    }
+
+    static bf_float_backend<Precision> quiet_NaN() {
+        bf_float_backend<Precision> res;
+        ::bf_set_nan(res.bf_val());
+        return res;
+    }
 };
 
 
@@ -154,9 +166,24 @@ template <limb_t Precision>
 void eval_frexp(bf_float_backend<Precision> & result,
                 const bf_float_backend<Precision> & arg,
                 typename bf_float_backend<Precision>::exponent_type * p_exponent) {
-    *p_exponent = arg.bf_val()->expn;
+    // special case for infinity/nan/zero values
+    auto cls = eval_fpclassify(arg);
+    if (cls == FP_INFINITE || cls == FP_ZERO || cls == FP_NAN) {
+        result = arg;
+
+        if (p_exponent) {
+            *p_exponent = 0;
+        }
+
+        return;
+    }
+
     result = arg;
     result.bf_val()->expn = 0;
+
+    if (p_exponent) {
+        *p_exponent = arg.bf_val()->expn;
+    }
 }
 
 
@@ -167,12 +194,17 @@ void eval_frexp(bf_float_backend<Precision> & result,
     typename bf_float_backend<Precision>::exponent_type exp = 0;
     eval_frexp(result, arg, &exp);
 
-    if (exp > static_cast<typename bf_float_backend<Precision>::exponent_type>(INT_MAX) ||
-        exp < static_cast<typename bf_float_backend<Precision>::exponent_type>(INT_MIN)) {
-        throw std::runtime_error{"eval_frexp: exponent does not fit in int"};
-    }
+    if (p_exponent != nullptr) {
+        auto cls = eval_fpclassify(arg);
+        if (cls == FP_ZERO || cls == FP_NORMAL) {
+            if (exp > static_cast<typename bf_float_backend<Precision>::exponent_type>(INT_MAX) ||
+                exp < static_cast<typename bf_float_backend<Precision>::exponent_type>(INT_MIN)) {
+                throw std::runtime_error{"eval_frexp: exponent does not fit in int"};
+            }
 
-    *p_exponent = static_cast<int>(exp);
+            *p_exponent = static_cast<int>(exp);
+        }
+    }
 }
 
 
@@ -253,21 +285,21 @@ void eval_acos(bf_float_backend<Precision> & result,
 }
 
 
-template <limb_t Precision>
-void eval_atan(bf_float_backend<Precision> & result,
-               const bf_float_backend<Precision> & arg) {
-    auto ret = ::bf_atan(result.bf_val(), arg.bf_val(), Precision, bf_float_backend<Precision>::bf_flags);
-    check_bf_error(ret, "bf_atan");
-}
+// template <limb_t Precision>
+// void eval_atan(bf_float_backend<Precision> & result,
+//                const bf_float_backend<Precision> & arg) {
+//     auto ret = ::bf_atan(result.bf_val(), arg.bf_val(), Precision, bf_float_backend<Precision>::bf_flags);
+//     check_bf_error(ret, "bf_atan");
+// }
 
 
-template <limb_t Precision>
-void eval_atan2(bf_float_backend<Precision> & result,
-                const bf_float_backend<Precision> & a,
-                const bf_float_backend<Precision> & b) {
-    auto ret = ::bf_atan2(result.bf_val(), a.bf_val(), b.bf_val(), Precision, bf_float_backend<Precision>::bf_flags);
-    check_bf_error(ret, "bf_atan2");
-}
+// template <limb_t Precision>
+// void eval_atan2(bf_float_backend<Precision> & result,
+//                 const bf_float_backend<Precision> & a,
+//                 const bf_float_backend<Precision> & b) {
+//     auto ret = ::bf_atan2(result.bf_val(), a.bf_val(), b.bf_val(), Precision, bf_float_backend<Precision>::bf_flags);
+//     check_bf_error(ret, "bf_atan2");
+// }
 
 
 template <limb_t Precision>
@@ -323,6 +355,37 @@ int eval_fpclassify(const bf_float_backend<Precision> & arg) {
     } else {
         return FP_NORMAL;
     }
+}
+
+
+template <limb_t Precision>
+bool eval_is_zero(const bf_float_backend<Precision> & arg) {
+    return ::bf_is_zero(arg.bf_val()) != 0;
+}
+
+
+template <limb_t Precision>
+int eval_get_sign(const bf_float_backend<Precision> & arg) {
+    if (arg.bf_val()->sign == 1) {
+        return -1;
+    } else {
+        return (::bf_is_zero(arg.bf_val()) != 0) ? 0 : 1;
+    }
+}
+
+
+template <limb_t Precision>
+void eval_fabs(bf_float_backend<Precision> & result, const bf_float_backend<Precision> & arg) {
+    result = arg;
+    if (eval_get_sign(result) < 0) {
+        result.negate();
+    }
+}
+
+
+template <limb_t Precision>
+void eval_abs(bf_float_backend<Precision> & result, const bf_float_backend<Precision> & arg) {
+    return eval_fabs(result, arg);
 }
 
 

@@ -32,6 +32,8 @@ static std::string bf_error_string(int ret) {
 
 // Checks for libbf error and reports error and throws corresponding exception
 void check_bf_error(int ret, std::string_view op) {
+    ret &= ~(BF_ST_INVALID_OP
+    );
     ret &= ~(BF_ST_INEXACT);
     ret &= ~(BF_ST_DIVIDE_ZERO);
     ret &= ~(BF_ST_UNDERFLOW);

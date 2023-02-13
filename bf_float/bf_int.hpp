@@ -16,7 +16,7 @@ using boost::multiprecision::backends::bf_int_backend;
 //
 // Typedef whatever number's make use of this backend:
 //
-template <limb_t Precision = 113>
+template <limb_t Precision = BF_PREC_INF>
 using bf_int = number<bf_int_backend<Precision>, et_off>;
 
 //
@@ -35,37 +35,13 @@ int bf_float_set_overflow(bf_t *r, int sign, limb_t prec, bf_flags_t flags);
 
 template <limb_t Precision>
 bf_int<Precision> bf_int_max() {
-    if constexpr (Precision == BF_PREC_INF) {
-        return bf_int<Precision>{};
-    } else {
-        assert(false && "NYI");
-        return bf_int<Precision>{};
-    }
-
-    // bf_int_backend<Precision> fb;
-    // bf_int_set_overflow(fb.bf_val(), 0, Precision, ::bf_set_exp_bits(15) | BF_RNDZ | BF_FLAG_SUBNORMAL);
-    // return bf_float<Precision>{fb};
+    return bf_int_backend<Precision>::max();
 }
 
 
 template <limb_t Precision>
 bf_int<Precision> bf_int_min() {
-    // auto e_max = (::limb_t)1 << (bf_get_exp_bits(bf_int_backend<Precision>::bf_flags) - 1);
-    // auto e_min = -e_max + 3;
-
-    // bf_int_backend<Precision> fb;
-    // ::bf_set_ui(fb.bf_val(), 1);
-    // fb.bf_val()->expn = e_min;
-    // return bf_float<Precision>{fb};
-
-    // TODO
-
-    if constexpr (Precision == BF_PREC_INF) {
-        return bf_int<Precision>{};
-    } else {
-        assert(false && "NYI");
-        return bf_int<Precision>{};
-    }
+    return bf_int_backend<Precision>::min();
 }
 
 
@@ -79,14 +55,18 @@ class numeric_limits<boost::multiprecision::number<boost::multiprecision::bf_int
 {
     typedef boost::multiprecision::number<boost::multiprecision::bf_int_backend<Precision>, ExpressionTemplates> number_type;
 
+    static constexpr int calc_digits10(int digits) {
+        return static_cast<int>(digits * std::log10(static_cast<double>(2.0)));
+    }
+
 public:
     static constexpr bool is_specialized = true;
     static number_type min() { return boost::multiprecision::bf_int_min<Precision>(); }
     static number_type max() { return boost::multiprecision::bf_int_max<Precision>(); }
     static number_type lowest() { return min(); }
-    static constexpr int                digits       = static_cast<int>(Precision);
-    static constexpr int                digits10     = digits * std::log10(2);
-    static constexpr int                max_digits10 = digits * std::log10(2);
+    static constexpr int                digits       = (Precision == BF_PREC_INF) ? INT_MAX : static_cast<int>(Precision);
+    static constexpr int                digits10     = calc_digits10(digits);
+    static constexpr int                max_digits10 = calc_digits10(digits);
     static constexpr bool               is_signed    = true;
     static constexpr bool               is_integer   = true;
     static constexpr bool               is_exact     = true;

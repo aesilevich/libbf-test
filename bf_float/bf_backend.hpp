@@ -1,12 +1,13 @@
 
 #pragma once
 
-#include "bf_float_context.hpp"
+#include "bf_context.hpp"
 #include "bf_error.hpp"
 #include "libbf.hpp"
 #include <cassert>
 #include <boost/multiprecision/number.hpp>
 #include <boost/container_hash/hash.hpp>
+#include <iostream>
 
 
 namespace boost::multiprecision::backends { 
@@ -37,7 +38,7 @@ public:
     // bf value struct.
     explicit bf_backend(::bf_flags_t flags):
     bf_flags_{flags} {
-        ::bf_init(bf_float_context::bf_ctx(), &bf_val_);
+        ::bf_init(bf_context::bf_ctx(), &bf_val_);
     }
 
 
@@ -87,6 +88,16 @@ public:
         auto ret = ::bf_set_ui(bf_val(), i);
         check_bf_error(ret, "bf_set_ui");
     }
+
+
+    // void assign(__int128 i) {
+    //     assert(false && "NYI");
+    // }
+
+
+    // void assign(unsigned __int128 i) {
+    //     assert(false && "NYI");
+    // }
 
 
     // bf_float_backend& operator=(bf_float_backend&& o);
