@@ -32,7 +32,7 @@
 
 
 
-## Not usefull tests
+## Not useful tests
 
 |Test Name                      |Description|
 |-------------------------------|-----------|
@@ -40,13 +40,13 @@
 |test_convert*                  | Tests conversion between different number implementations. Does not test computations. |
 |test_fixed_zero_precision_io   | Tests correct specific to boost.multiprecision formatting for stdio. Does not test computations. |
 |test_float_io                  | Tests float conversion to/from string specific to boost.multiprecision. Does not test computations. |
-|test_fpclassify                | Tests fpclassify function in number traits. Does not test compurations. |
+|test_fpclassify                | Tests fpclassify function in number traits. Does not test computations. |
 |test_generic_conv              | Tests conversions between different implementations. Does not test computations. |
 |test_int_io                    | Tests integer conversion to/from string specific to boost.multiprecision. Does not test computations. |
 |test_hash                      | Tests std::hash support for big numbers. Does not test computations. |
 |test_mixed                     | Tests performing operations with mixed precisions. Not implemented for libbf. |
-|test_nothrow*                  | Tests various type traits related to nothrow specifier. Does not test computations. |
-|test_move                      | Tests std::move support for big number. Does not test computations. |
+|test_nothrow*                  | Tests various type traits related to the nothrow specifier. Does not test computations. |
+|test_move                      | Tests std::move support for big numbers. Does not test computations. |
 |test_optional_compat           | Tests compatiblity with boost::optional type. Does not test computations. |
 |test_preserve_*_precision      | Tests for changing default computation precision. Does not test computations. |
 |test_rational_io               | Tests formatting with iostream. Does not test computations. |
@@ -59,19 +59,19 @@
 
 |Test Name                              |Description|
 |---------------------------------------|-----------|
-|constexpr_test_*                       | Tests for compile time computations with the builtin boost.multiprecision implementations of big numbers. Compile time computations are not applicable to libbf |
+|constexpr_test_*                       | Tests for compile-time computations with the built-in boost.multiprecision implementations of big numbers. Compile time computations are not applicable to libbf |
 |standalone_test_convert_from_tom_int   | Specialized test for the tommath library |
-|test_adapt_serial                      | Serialization tests for builtin boost.multiprecision implementation of big numbers |
+|test_adapt_serial                      | Serialization tests for built-in boost.multiprecision implementation of big numbers |
 |test_checked_*cpp_int                  | Tests for throwing correct exceptions for builtin boost.multiprecision implementation of big integers |
 |test_complex*                          | Tests for complex numbers |
-|test_cpp_*                             | Performs tests specific to the builtin boost.multiprecision big numbers implementation |
+|test_cpp_*                             | Performs tests specific to the built-in boost.multiprecision big numbers implementation |
 |test_float_conversions                 | Tests compile time numeric traits for builtin boost.multiprecision big numbers implementation. |
 |test_float128_serial                   | Tests serialization of builtin float implementation |
-|test_gmp_conversions                   | Tests conversions between builtin implementation and libgmp implementation. |
+|test_gmp_conversions                   | Tests conversions between built-in implementation and libgmp implementation. |
 |test_mpc*                              | libmpc implementation specific tests. |
 |test_mpfr*                             | libmpfr implementation specific tests. |
 |test_rat_float_interconv               | Tests conversion between different float implementations. |
-|test_roots_10k_digits                  | Tests calculating sqrt with builtin implementation for very big numbers. Supports only builtin implementation. |
+|test_roots_10k_digits                  | Tests calculating sqrt with built-in implementation for very big numbers. Supports only built-in implementation. |
 
 
 
@@ -80,4 +80,4 @@
 |Test Name              |Description|
 |-----------------------|-----------|
 |test_eigen             | Test for interoperability with the Eigen linear algebra C++ library. Requires additional dependency. |
-|test_int_sqrt          | Tests calculating sqrt for builtin integer implementation. Can be used for testing libbf, but requires additional implementation of conversion from 128bit integer (__int128) |
+|test_int_sqrt          | Tests calculating sqrt for built-in integer implementation. Can be used for testing libbf, but requires additional implementation of conversion from 128bit integer (__int128) |
