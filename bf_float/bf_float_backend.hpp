@@ -14,6 +14,7 @@ namespace boost::multiprecision::backends {
 template <::limb_t Precision>
 class bf_float_backend: public bf_backend {
 public:
+    static constexpr auto exponent_bits = BF_EXP_BITS_MAX;
     static const ::bf_flags_t bf_flags;
 
     bf_float_backend(): bf_backend{bf_flags} {}
@@ -78,7 +79,7 @@ public:
 
 
 template <::limb_t Precision>
-const ::bf_flags_t bf_float_backend<Precision>::bf_flags = ::bf_set_exp_bits(15) | BF_RNDN | BF_FLAG_SUBNORMAL;
+const ::bf_flags_t bf_float_backend<Precision>::bf_flags = ::bf_set_exp_bits(exponent_bits) | BF_RNDN | BF_FLAG_SUBNORMAL;
 
 
 //

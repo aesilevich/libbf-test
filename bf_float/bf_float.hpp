@@ -41,8 +41,9 @@ int bf_float_set_overflow(bf_t *r, int sign, limb_t prec, bf_flags_t flags);
 
 template <limb_t Precision>
 bf_float<Precision> bf_float_max() {
+    auto exp_bits = bf_float_backend<Precision>::exponent_bits;
     bf_float_backend<Precision> fb;
-    bf_float_set_overflow(fb.bf_val(), 0, Precision, ::bf_set_exp_bits(15) | BF_RNDZ | BF_FLAG_SUBNORMAL);
+    bf_float_set_overflow(fb.bf_val(), 0, Precision, ::bf_set_exp_bits(exp_bits) | BF_RNDZ | BF_FLAG_SUBNORMAL);
     return bf_float<Precision>{fb};
 }
 
