@@ -285,21 +285,21 @@ void eval_acos(bf_float_backend<Precision> & result,
 }
 
 
-// template <limb_t Precision>
-// void eval_atan(bf_float_backend<Precision> & result,
-//                const bf_float_backend<Precision> & arg) {
-//     auto ret = ::bf_atan(result.bf_val(), arg.bf_val(), Precision, bf_float_backend<Precision>::bf_flags);
-//     check_bf_error(ret, "bf_atan");
-// }
+template <limb_t Precision>
+void eval_atan(bf_float_backend<Precision> & result,
+               const bf_float_backend<Precision> & arg) {
+    auto ret = ::bf_atan(result.bf_val(), arg.bf_val(), Precision, bf_float_backend<Precision>::bf_flags);
+    check_bf_error(ret, "bf_atan");
+}
 
 
-// template <limb_t Precision>
-// void eval_atan2(bf_float_backend<Precision> & result,
-//                 const bf_float_backend<Precision> & a,
-//                 const bf_float_backend<Precision> & b) {
-//     auto ret = ::bf_atan2(result.bf_val(), a.bf_val(), b.bf_val(), Precision, bf_float_backend<Precision>::bf_flags);
-//     check_bf_error(ret, "bf_atan2");
-// }
+template <limb_t Precision>
+void eval_atan2(bf_float_backend<Precision> & result,
+                const bf_float_backend<Precision> & a,
+                const bf_float_backend<Precision> & b) {
+    auto ret = ::bf_atan2(result.bf_val(), a.bf_val(), b.bf_val(), Precision, bf_float_backend<Precision>::bf_flags);
+    check_bf_error(ret, "bf_atan2");
+}
 
 
 template <limb_t Precision>
