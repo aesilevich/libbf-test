@@ -209,19 +209,34 @@ void eval_frexp(bf_float_backend<Precision> & result,
 }
 
 
-template <limb_t Precision>
-void eval_ldexp(bf_float_backend<Precision> & result,
-                const bf_float_backend<Precision> & arg,
-                typename bf_float_backend<Precision>::exponent_type exponent) {
-    result = arg;
-    auto ret = ::bf_mul_2exp(result.bf_val(), exponent, Precision, bf_float_backend<Precision>::bf_flags);
-    check_bf_error(ret, "bf_mul_2exp");
-}
+template <limb_t Precision, typename Exponent>
+void eval_ldexp(bf_float_backend<Precision> & result, const bf_float_backend<Precision> & arg, Exponent exponent) {
+    using exponent_type = typename bf_float_backend<Precision>::exponent_type;
+    static_assert(std::is_signed_v<exponent_type>, "exponent type should be signed");
 
+    if constexpr (std::is_same_v<exponent_type, Exponent>) {
+        // default case: using expected type for exponent
+        result = arg;
+        auto ret = ::bf_mul_2exp(result.bf_val(), exponent, Precision, bf_float_backend<Precision>::bf_flags);
+        check_bf_error(ret, "bf_mul_2exp");
+    } else {
+        if constexpr (sizeof(Exponent) >= sizeof(exponent_type)) {
+            // checking for overflow
+            if (exponent > static_cast<Exponent>(std::numeric_limits<exponent_type>::max())) {
+                throw std::runtime_error{"exponent does not fit into exponent type"};
+            }
 
-template <limb_t Precision>
-void eval_ldexp(bf_float_backend<Precision> & result, const bf_float_backend<Precision> & arg, int exponent) {
-    eval_ldexp(result, arg, static_cast<typename bf_float_backend<Precision>::exponent_type>(exponent));
+            // checking for underflow
+            if constexpr (std::is_signed_v<Exponent>) {
+                if (exponent < static_cast<Exponent>(std::numeric_limits<exponent_type>::min())) {
+                    throw std::runtime_error{"exponent does not fit into exponent type"};
+                }
+            }
+        }
+
+        // value of exponent should fit in exponent type
+        eval_ldexp(result, arg, static_cast<exponent_type>(exponent));
+    }
 }
 
 
